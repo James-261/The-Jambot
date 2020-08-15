@@ -38,16 +38,16 @@ class admin(commands.Cog):
     async def byebye(self, ctx, amount=6): #6 because it needs to clear the command message too
    	    await ctx.channel.purge(limit=amount+1)
 
-    @commands.command(brief='Kicks users.', description='Do ".kick @user".') #Just testing on kick first will do ban after
-    @commands.has_permissions(administrator=True)
-    async def kick(self, ctx, userName, discord.User):
-        await member.kick(userName)#Why is it member.kick and not bot.kick?
-        #await bot.kick(userName)#One of these 2 should work, just test each one. Commented out bottom line for testing.
-        #await commands.send_message(user, "Damn, I'm just a lowly bot but even I think you should have been kicked :pensive:")
+    @commands.command(brief='Kicks users.', description='Do ".kick @user".')
+    @commands.has_permissions(kick_members=True)
+    async def kick(self, ctx, member: discord.Member, *, reason=None):
+        user = await commands.get_user_info(member.ID)
+        await member.kick(reason=reason)
+        await commands.send_message(user, "Damn, I'm just a lowly bot but even I think you should have been kicked :pensive:")
 
     @commands.command(brief='Bans users.', description='Do ".ban @user".')
     @commands.has_permissions(administrator=True)
-    async def ban(self, ctx, member:discord.Member, *, reason=None):
+    async def ban(self, ctx, member: discord.Member, *, reason=None):
         user = await commands.get_user_info(member.ID)
         await member.ban(reason=reason)
         await commands.send_message(user, "Damn, I'm just a lowly bot but even I think you should have been banned :pensive:")
@@ -56,7 +56,7 @@ class admin(commands.Cog):
     
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def gotosleep(self, ctx, role_id: int = 736248018139086911):
+    async def gotosleep(self, ctx, role_id: int = 736248018139086911):1
         awake = [member for member in ctx.guild.get_role(role_id).members if member.status != discord.Status.offline and not member.bot]
         text = ''.join(f'<@{member.id}> ' for member in awake) + "GO TO SLEEP"
         await ctx.send(text)
